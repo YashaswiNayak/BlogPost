@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Allow registration
                         .requestMatchers("/h2-console/**").permitAll() // Allow H2 console access
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated() // Secure all other requests
                 )
                 .userDetailsService(jpaUserDetailsService) // Use our custom user details service
