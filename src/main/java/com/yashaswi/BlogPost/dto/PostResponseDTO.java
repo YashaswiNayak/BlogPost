@@ -10,6 +10,7 @@ public class PostResponseDTO {
     private String title;
     private String postData;
     private UserResponseDTO author;
+    private Integer likeCount;
     private List<CommentResponseDTO> comments;
 
 }

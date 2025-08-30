@@ -36,6 +36,11 @@ public class EntityToDtoMapper {
         if (post.getUser() != null) {
             dto.setAuthor(toDto(post.getUser()));
         }
+        if (post.getLikes() != null) {
+            dto.setLikeCount(post.getLikes().size());
+        } else {
+            dto.setLikeCount(0);
+        }
 
         if (post.getComments() != null) {
             dto.setComments(
