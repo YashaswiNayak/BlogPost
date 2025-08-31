@@ -1,15 +1,18 @@
 package com.yashaswi.BlogPost.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,15 +27,15 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @NotFound
+    @NotNull
     @Column(nullable = false)
     String name;
 
-    @NotFound
+    @NotNull
     @Column(nullable = false)
     String userName;
 
-    @NotFound
+    @NotNull
     @Column(nullable = false)
     String password;
 
@@ -44,6 +47,12 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostLike> likes;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

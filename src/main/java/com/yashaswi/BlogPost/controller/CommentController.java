@@ -39,7 +39,7 @@ public class CommentController {
 
     @DeleteMapping("/comments/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable Integer commentId) {
-        commentService.deleteComment(commentId);
+    public void deleteComment(@PathVariable Integer commentId, @AuthenticationPrincipal UserDetails userDetails) {
+        commentService.deleteComment(commentId, userDetails);
     }
 }

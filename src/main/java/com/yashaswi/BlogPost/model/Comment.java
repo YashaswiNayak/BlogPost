@@ -1,11 +1,15 @@
 package com.yashaswi.BlogPost.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Builder
 @Data
@@ -18,7 +22,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @NotFound
+    @NotNull
     @Column(nullable = false)
     String comment;
 
@@ -29,5 +33,11 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 }

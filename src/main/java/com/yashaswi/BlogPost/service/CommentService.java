@@ -12,7 +12,10 @@ import com.yashaswi.BlogPost.repository.CommentRepository;
 import com.yashaswi.BlogPost.repository.PostRepository;
 import com.yashaswi.BlogPost.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,12 +59,18 @@ public class CommentService {
         return comments.stream().map(EntityToDtoMapper::toDto).collect(Collectors.toList());
     }
 
-    public void deleteComment(Integer commentID) {
-        if (!commentRepository.existsById(commentID)) {
-            throw new CommentNotFoundException(commentID);
+    public void deleteComment(Integer commentID, UserDetails userDetails) {
+        Comment comment = commentRepository.findById(commentID)
+                .orElseThrow(() -> new CommentNotFoundException(commentID));
+
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!comment.getUser().getUsername().equals(userDetails.getUsername()) && !isAdmin) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot delete others' comments");
         }
-        commentRepository.deleteById(commentID);
+
+        commentRepository.delete(comment);
+
+
     }
-
-
-}
