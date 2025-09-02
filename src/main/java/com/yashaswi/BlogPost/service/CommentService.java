@@ -12,13 +12,12 @@ import com.yashaswi.BlogPost.repository.CommentRepository;
 import com.yashaswi.BlogPost.repository.PostRepository;
 import com.yashaswi.BlogPost.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -51,12 +50,12 @@ public class CommentService {
     }
 
     //Gets all the comments for a specific post
-    public List<CommentResponseDTO> getAllCommentByPostId(Integer postId) {
+    public Page<CommentResponseDTO> getAllCommentByPostId(Integer postId, Pageable pageable) {
         if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException(postId);
         }
-        List<Comment> comments = commentRepository.findByPostId(postId);
-        return comments.stream().map(EntityToDtoMapper::toDto).collect(Collectors.toList());
+        Page<Comment> comments = commentRepository.findByPostId(postId,pageable);
+        return comments.map(EntityToDtoMapper::toDto);
     }
 
     public void deleteComment(Integer commentID, UserDetails userDetails) {
@@ -72,5 +71,5 @@ public class CommentService {
 
         commentRepository.delete(comment);
 
-
     }
+}

@@ -1,6 +1,8 @@
 package com.yashaswi.BlogPost.service;
 
+import com.yashaswi.BlogPost.dto.UserResponseDTO;
 import com.yashaswi.BlogPost.exception.PostNotFoundException;
+import com.yashaswi.BlogPost.mapper.EntityToDtoMapper;
 import com.yashaswi.BlogPost.model.Post;
 import com.yashaswi.BlogPost.model.PostLike;
 import com.yashaswi.BlogPost.model.User;
@@ -8,6 +10,8 @@ import com.yashaswi.BlogPost.repository.PostLikeRepository;
 import com.yashaswi.BlogPost.repository.PostRepository;
 import com.yashaswi.BlogPost.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -54,5 +58,10 @@ public class PostLikeService {
     public boolean hasUserLikedPost(Integer postId, String username) {
         User user = userRepository.findByUserName(username).orElseThrow(() -> new RuntimeException("User not found " + username));
         return isPostLikedByUser(postId, user.getId());
+    }
+
+    public Page<UserResponseDTO> getLikeForPost(Integer postId, Pageable pageable) {
+        Page<PostLike> likes = postLikeRepository.findByPostId(postId, pageable);
+        return likes.map(like -> EntityToDtoMapper.toDto(like.getUser()));
     }
 }

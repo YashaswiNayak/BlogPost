@@ -1,6 +1,9 @@
 package com.yashaswi.BlogPost.controller;
 
+import com.yashaswi.BlogPost.dto.UserResponseDTO;
 import com.yashaswi.BlogPost.service.PostLikeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +30,11 @@ public class PostLikeController {
                 "message", isLiked ? "Post liked successfully" : "Post unliked successfully"
         );
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("{postId}/likes")
+    public Page<UserResponseDTO> getLikeForPost(@PathVariable Integer postId, Pageable pageable) {
+        return postLikeService.getLikeForPost(postId, pageable);
     }
 
     @GetMapping("/{postId}/likes/count")
