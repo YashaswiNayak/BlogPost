@@ -47,4 +47,7 @@ public class Post {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Column(name = "deleted")
+    private Boolean deleted=false;
 }

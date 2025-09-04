@@ -37,12 +37,12 @@ public class PostService {
     }
 
     public PostResponseDTO getPostById(Integer id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
+        Post post = postRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new PostNotFoundException(id));
         return EntityToDtoMapper.toDto(post);
     }
 
     public Page<PostResponseDTO> getAllPost(Pageable pageable) {
-        Page<Post> posts = postRepository.findAll(pageable);
+        Page<Post> posts = postRepository.findByDeletedFalse(pageable);
         return posts.map(EntityToDtoMapper::toDto);
     }
 
@@ -56,7 +56,7 @@ public class PostService {
     }
 
     public PostResponseDTO editPost(Integer id, PostDTO ps, UserDetails userDetails) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
+        Post post = postRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new PostNotFoundException(id));
         boolean isAdmin = userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
         if (!post.getUser().getUsername().equals(userDetails.getUsername()) && !isAdmin) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot delete others posts");
@@ -65,5 +65,21 @@ public class PostService {
         post.setPostData(ps.getPostData());
         Post updatedPost = postRepository.save(post);
         return EntityToDtoMapper.toDto(updatedPost);
+    }
+
+    public void softDeletePostById(Integer postId, UserDetails userDetails) {
+        Post post = postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        if (post.getUser().getUsername().equals(userDetails.getUsername()) && !isAdmin) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot delete others posts");
+        }
+        post.setDeleted(true);
+        postRepository.save(post);
+    }
+
+    public Page<PostResponseDTO> getPostsByUser(String userName, Pageable pageable) {
+        Page<Post> posts = postRepository.findByUser_UserNameAndDeletedFalse(userName, pageable);
+        return posts.map(EntityToDtoMapper::toDto);
     }
 }

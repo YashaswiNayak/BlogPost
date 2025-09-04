@@ -30,7 +30,7 @@ public class PostLikeService {
 
     @Transactional
     public boolean toggleLike(Integer postId, String username) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        Post post = postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() -> new PostNotFoundException(postId));
         User user = userRepository.findByUserName(username).orElseThrow(() -> new RuntimeException("User not found " + username));
 
         Optional<PostLike> existingLike = postLikeRepository.findByPostIdAndUserId(postId, user.getId());

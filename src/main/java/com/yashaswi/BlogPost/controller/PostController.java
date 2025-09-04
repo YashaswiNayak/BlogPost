@@ -31,6 +31,11 @@ public class PostController {
         return postService.getPostById(id);
     }
 
+    @GetMapping("/my")
+    public Page<PostResponseDTO> getMyPosts(@AuthenticationPrincipal UserDetails userDetails, Pageable pageable) {
+        return postService.getPostsByUser(userDetails.getUsername(), pageable);
+    }
+
     //________________________________________________________________________________________
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,7 +47,7 @@ public class PostController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePost(@PathVariable Integer id, @AuthenticationPrincipal UserDetails userDetails) {
-        postService.deletePostById(id, userDetails);
+        postService.softDeletePostById(id, userDetails);
         System.out.println("The post with ID: " + id + " has been deleted");
     }
 

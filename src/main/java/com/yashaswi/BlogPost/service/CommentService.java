@@ -34,7 +34,7 @@ public class CommentService {
     }
 
     public CommentResponseDTO createComment(Integer postId, CommentDTO commentDTO, String commenterUsername) {
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdAndDeletedFalse(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
         User commenter = userRepository.findByUserName(commenterUsername)
