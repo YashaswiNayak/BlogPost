@@ -1,6 +1,5 @@
 package com.yashaswi.BlogPost.config;
 
-import com.yashaswi.BlogPost.model.User;
 import com.yashaswi.BlogPost.service.JpaUserDetailsService;
 import com.yashaswi.BlogPost.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -51,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 
 }

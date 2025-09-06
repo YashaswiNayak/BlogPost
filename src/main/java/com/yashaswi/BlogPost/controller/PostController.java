@@ -36,6 +36,11 @@ public class PostController {
         return postService.getPostsByUser(userDetails.getUsername(), pageable);
     }
 
+    @GetMapping("/search")
+    public Page<PostResponseDTO> searchAllPosts(@RequestParam("query") String query, Pageable pageable){
+        return  postService.searchAllPosts(query,pageable);
+    }
+
     //________________________________________________________________________________________
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

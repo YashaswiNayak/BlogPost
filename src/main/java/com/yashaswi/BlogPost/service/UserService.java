@@ -3,6 +3,7 @@ package com.yashaswi.BlogPost.service;
 import com.yashaswi.BlogPost.dto.UserRegistrationDTO;
 import com.yashaswi.BlogPost.dto.UserResponseDTO;
 import com.yashaswi.BlogPost.exception.DuplicateResponseException;
+import com.yashaswi.BlogPost.exception.UserNotFoundException;
 import com.yashaswi.BlogPost.mapper.EntityToDtoMapper;
 import com.yashaswi.BlogPost.model.Role;
 import com.yashaswi.BlogPost.model.User;
@@ -34,5 +35,22 @@ public class UserService {
 
     public List<UserResponseDTO> getAllUsers() {
         return userRepository.findAll().stream().map(EntityToDtoMapper::toDto).collect(Collectors.toList());
+    }
+
+    public UserResponseDTO getProfile(String username) {
+        User user = userRepository.findByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
+        return EntityToDtoMapper.toDto(user);
+    }
+
+    public UserResponseDTO updateProfile(String username, UserResponseDTO userResponseDTO) {
+        User user = userRepository.findByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
+        if (userResponseDTO.getName() != null) {
+            user.setName(userResponseDTO.getName());
+        }
+        if (userResponseDTO.getUserName() != null) {
+            user.setUserName(userResponseDTO.getUserName());
+        }
+        userRepository.save(user);
+        return EntityToDtoMapper.toDto(user);
     }
 }

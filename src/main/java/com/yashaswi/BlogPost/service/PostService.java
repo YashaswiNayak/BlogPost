@@ -82,4 +82,9 @@ public class PostService {
         Page<Post> posts = postRepository.findByUser_UserNameAndDeletedFalse(userName, pageable);
         return posts.map(EntityToDtoMapper::toDto);
     }
+
+    public Page<PostResponseDTO> searchAllPosts(String text, Pageable pageable) {
+        Page<Post> posts = postRepository.searchPosts(text, pageable);
+        return posts.map(EntityToDtoMapper::toDto);
+    }
 }
