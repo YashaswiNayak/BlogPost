@@ -62,6 +62,7 @@ public class EntityToDtoMapper {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setId(user.getId());
         dto.setUserName(user.getUsername());
+        dto.setName(user.getName());
         return dto;
     }
 }

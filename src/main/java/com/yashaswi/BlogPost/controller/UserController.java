@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,11 @@ public class UserController {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userService = userService;
+    }
+
+    @GetMapping("/profile")
+    public UserResponseDTO getProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        return userService.getProfile(userDetails.getUsername());
     }
 
     @PostMapping("/register")
@@ -42,5 +48,10 @@ public class UserController {
         );
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return jwtService.generateToken(userDetails);
+    }
+
+    @PutMapping("/profile")
+    public UserResponseDTO updateProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UserResponseDTO userResponseDTO) {
+        return userService.updateProfile(userDetails.getUsername(), userResponseDTO);
     }
 }
